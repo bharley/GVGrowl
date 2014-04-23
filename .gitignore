@@ -1,2 +1,6 @@
-.idea
-out
+.idea/
+out/
+target/
+dist/*
+*.class
+*.log

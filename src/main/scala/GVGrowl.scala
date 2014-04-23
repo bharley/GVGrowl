@@ -2,11 +2,11 @@ package com.blakeharley.gvgrowl
 
 object GVGrowl {
 	def main(args: Array[String]) {
-		runner(new GoogleVoice("<username>", "<password>"))
+		runner(new GoogleVoice("username", "password"))
 	}
 
 	def runner(voice: GoogleVoice) {
 		// testing
-		voice.messages
+		voice.messages.foreach(println(_))
 	}
 }
