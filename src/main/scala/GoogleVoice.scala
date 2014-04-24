@@ -17,16 +17,16 @@ class GoogleVoice(username: String, password: String) {
 	/**
 	 * The Google Voice API instance.
 	 */
-	private lazy val voice = new Voice(username, password)
+	private lazy val voice = new Voice(username, password, null, false)
 
 	/**
 	 * Gets all of the SMS messages available on the first page and returns them in
-	 * chronological order.
+	 * chronological order. All messages from the current user are stripped out.
 	 *
 	 * @return All messages on the SMS messages page
 	 */
 	def messages: List[SMS] = {
-		smsData(voice.get("https://www.google.com/voice/request/messages")).sorted
+		smsData(voice.get("https://www.google.com/voice/request/messages")).filter(_.msgType == 10).sorted
 	}
 
 	/**
@@ -40,6 +40,7 @@ class GoogleVoice(username: String, password: String) {
 		object M extends CC[Map[String, Any]]
 		object L extends CC[List[Any]]
 		object S extends CC[String]
+		object D extends CC[Double]
 
 		for {
 			Some(M(map)) <- List(JSON.parseFull(rawJson))
@@ -48,11 +49,12 @@ class GoogleVoice(username: String, password: String) {
 			L(messages) = messageGroup("children")
 			M(sms) <- messages
 			S(id) = sms("id")
+		  D(msgType) = sms("type")
 			S(message) = sms("message")
 			S(from) = sms("phoneNumber")
 			S(timestamp) = sms("startTime")
 		} yield {
-			SMS(id, from, message, new DateTime(timestamp.toLong))
+			SMS(id, msgType.toInt, from, message, new DateTime(timestamp.toLong))
 		}
 	}
 }
@@ -61,10 +63,11 @@ class GoogleVoice(username: String, password: String) {
  * Simple container for SMS data.
  *
  * @param id The message ID
+ * @param msgType The message type
  * @param from The phone number of the person who sent this
  * @param message The message contents
  * @param datetime The time this message was recieved
  */
-case class SMS(id: String, from: String, message: String, datetime: DateTime) extends Ordered[SMS] {
+case class SMS(id: String, msgType: Int, from: String, message: String, datetime: DateTime) extends Ordered[SMS] {
 	def compare(that: SMS) = that.datetime.compare(datetime)
 }
