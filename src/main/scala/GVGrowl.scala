@@ -9,5 +9,7 @@ object GVGrowl {
 		Thread.sleep(100000L)
 	}
 
-	private lazy val voice = new GoogleVoice("username", "password")
+	private lazy val auth = new Authenticator
+
+	private lazy val voice = new GoogleVoice(auth.voice)
 }

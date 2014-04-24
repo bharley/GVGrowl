@@ -9,10 +9,9 @@ import com.techventus.server.voice.Voice
  * Handles interacting with the Google voice services. Essentially serves as a thin wrapper
  * around the Google Voice Java API.
  *
- * @param username Google Voice username
- * @param password Google Voice password
+ * @param voice The Google Voice API
  */
-class GoogleVoice(username: String, password: String) {
+class GoogleVoice(private val voice: Voice) {
 
 	private val urlSMS = "https://www.google.com/voice/request/messages"
 	private val urlContacts = "https://www.google.com/voice/request/contacts"
@@ -21,11 +20,6 @@ class GoogleVoice(username: String, password: String) {
 	 * Contains a pointer to the last new message
 	 */
 	private var lastMessageId = messages(0).id
-
-	/**
-	 * The Google Voice API instance.
-	 */
-	private lazy val voice = new Voice(username, password, null, false)
 
 	/**
 	 * Tracking variable for the following filter.

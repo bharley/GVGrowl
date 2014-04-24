@@ -8,6 +8,8 @@ libraryDependencies += "com.github.nscala-time" %% "nscala-time" % "1.0.0"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.2"
 
+libraryDependencies += "org.streum" %% "configrity-core" % "1.0.0"
+
 mainClass := Some("com.blakeharley.gvgrowl.GVGrowl")
 
 seq(appbundle.settings: _*)
