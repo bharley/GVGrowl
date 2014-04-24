@@ -14,6 +14,9 @@ import com.techventus.server.voice.Voice
  */
 class GoogleVoice(username: String, password: String) {
 
+	private val urlSMS = "https://www.google.com/voice/request/messages"
+	private val urlContacts = "https://www.google.com/voice/request/contacts"
+
 	/**
 	 * Contains a pointer to the last new message
 	 */
@@ -77,7 +80,7 @@ class GoogleVoice(username: String, password: String) {
 	 *
 	 * note: This probably needs to be reloaded when run for long periods of time
 	 */
-	lazy val contacts = contactsData(voice.get("https://www.google.com/voice/request/contacts"))
+	lazy val contacts = contactsData(voice.get(urlContacts))
 
 	/**
 	  * Gets all of the SMS messages available on the first page and returns them in
@@ -86,7 +89,7 @@ class GoogleVoice(username: String, password: String) {
 	 * @return All messages on the SMS messages page
 	 */
 	def messages: List[SMS] = {
-		smsData(voice.get("https://www.google.com/voice/request/messages")).filter(_.msgType == 10).sorted
+		smsData(voice.get(urlSMS)).filter(_.msgType == 10).sorted
 	}
 
 	// Silly JSON typedefs
