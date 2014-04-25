@@ -1,40 +1,28 @@
 package com.blakeharley.gvgrowl
 
 import com.techventus.server.voice.Voice
-import org.streum.configrity._
 
-class Authenticator {
-	private val configPath = getClass.getResource("/settings.conf").getPath
-	lazy val config = Configuration.load(configPath)
+/**
+ * Handles authenticating our Google sessions.
+ *
+ * @param config The config to read from and write back to
+ */
+class Authenticator(private val config: Configuration) {
 
-	lazy val username: Option[String] = {
-		try {
-			Some(config[String]("username"))
-		} catch {
-			case e: java.util.NoSuchElementException => None
-		}
-	}
+	def username: Option[String] = config.username
 
-	lazy val password: Option[String] = {
-		try {
-			Some(config[String]("password"))
-		} catch {
-			case e: java.util.NoSuchElementException => None
-		}
-	}
+	def password: Option[String] = config.password
 
-	lazy val authToken: Option[String] = {
-		try {
-			Some(config[String]("authToken"))
-		} catch {
-			case e: java.util.NoSuchElementException => None
-		}
-	}
+	def authToken: Option[String] = config.authToken
 
+	/**
+	 * Gets an instance of the Google Voice API using whatever
+	 * credentials we have.
+	 */
 	lazy val voice: Voice = {
 		// todo: Ask the user for stuff instead of this crappy route
-		if (username.isEmpty || password.isEmpty) {
-			throw new Exception("Username or password not defined")
+		if (!config.isValid) {
+			throw new Exception("Invalid configuration")
 		}
 
 		val key: String = authToken match {
@@ -48,7 +36,7 @@ class Authenticator {
 		}
 
 		// Write the auth key back
-		config.set("authToken", voice.getAuthToken).save(configPath)
+		config.saveAuthToken(voice.getAuthToken)
 
 		voice
 	}
